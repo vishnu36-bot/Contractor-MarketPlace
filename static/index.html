@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BuildMate India | Contractor Marketplace & Material Procurement</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fffbeb',
+              100: '#fef3c7',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+            },
+            accent: {
+              500: '#ea580c',
+              600: '#c2410c',
+            },
+            navy: {
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#020617',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .badge-amber { background-color: #fef3c7; color: #b45309; }
+    .badge-blue { background-color: #e0f2fe; color: #0369a1; }
+    .badge-emerald { background-color: #d1fae5; color: #065f46; }
+    .glass-nav { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+  <!-- TOP ANNOUNCEMENT BAR -->
+  <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-semibold py-1.5 px-4 text-center tracking-wide flex justify-between items-center">
+    <div class="container mx-auto flex justify-between items-center">
+      <span><i class="fa-solid fa-shield-halved mr-1"></i> Verified Contractors • Direct Factory Materials • Guaranteed Guidance</span>
+      <div class="hidden md:flex items-center space-x-3 text-[11px]">
+        <span><i class="fa-solid fa-phone mr-1"></i> Helpline: 1800-419-BUILD</span>
+        <span class="opacity-60">|</span>
+        <span>Currency: <strong>INR (₹)</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION BAR -->
+  <header class="sticky top-0 z-40 glass-nav border-b border-slate-800 text-white">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchMainTab('contractors')">
+        <div class="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/30">
+          <i class="fa-solid fa-helmet-safety"></i>
+        </div>
+        <div>
+          <div class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
+            Build<span class="text-amber-400">Mate</span>
+            <span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/30">INDIA</span>
+          </div>
+          <p class="text-[10px] text-slate-400 font-medium">Contractors & Materials Exchange</p>
+        </div>
+      </div>
+
+      <!-- City Location Selector -->
+      <div class="hidden lg:flex items-center bg-slate-800/80 rounded-lg px-3 py-1.5 border border-slate-700 text-xs">
+        <i class="fa-solid fa-location-dot text-amber-400 mr-2"></i>
+        <span class="text-slate-400 mr-1">Location:</span>
+        <select id="globalCitySelect" onchange="onGlobalCityChange(this.value)" class="bg-transparent text-white font-medium focus:outline-none cursor-pointer">
+          <option value="all" class="bg-slate-800 text-white">All Locations</option>
+          <option value="Bangalore" class="bg-slate-800 text-white" selected>Bangalore</option>
+          <option value="Mumbai" class="bg-slate-800 text-white">Mumbai</option>
+          <option value="Delhi NCR" class="bg-slate-800 text-white">Delhi NCR</option>
+          <option value="Hyderabad" class="bg-slate-800 text-white">Hyderabad</option>
+        </select>
+      </div>
+
+      <!-- Main Navigation Links -->
+      <nav class="hidden md:flex items-center space-x-1 text-sm font-medium">
+        <button onclick="switchMainTab('contractors')" id="nav-contractors" class="px-3 py-2 rounded-lg text-amber-400 bg-slate-800 font-semibold transition">
+          <i class="fa-solid fa-users-gear mr-1.5"></i> Find Contractors
+        </button>
+        <button onclick="switchMainTab('materials')" id="nav-materials" class="px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-boxes-stacked mr-1.5"></i> Materials Store
+        </button>
+        <button onclick="switchMainTab('howItWorks')" id="nav-howItWorks" class="px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">
+          <i class="fa-solid fa-lightbulb mr-1.5"></i> How Guidance Works
+        </button>
+      </nav>
+
+      <!-- User Actions & Cart -->
+      <div class="flex items-center space-x-2">
+        <!-- Cart Drawer Button -->
+        <button onclick="toggleCartModal(true)" class="relative bg-slate-800 hover:bg-slate-700 p-2.5 rounded-xl border border-slate-700 text-amber-400 transition">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span id="cartCountBadge" class="absolute -top-1.5 -right-1.5 bg-amber-500 text-slate-950 font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-900 shadow">0</span>
+        </button>
+
+        <!-- User Role Switcher / Profile Pill -->
+        <div class="relative">
+          <button id="authBtn" onclick="toggleAuthDropdown()" class="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 transition">
+            <div id="userAvatar" class="w-6 h-6 rounded-full bg-amber-500 text-slate-950 font-bold flex items-center justify-center text-[11px]">
+              R
+            </div>
+            <div class="text-left hidden sm:block leading-tight">
+              <span id="userNameNav" class="font-bold text-white block text-[11px]">Ramesh Kumar</span>
+              <span id="userRoleNav" class="text-[9px] text-amber-400 uppercase font-semibold">Customer</span>
+            </div>
+            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-1"></i>
+          </button>
+
+          <!-- Dropdown Menu for Roles & Switch -->
+          <div id="authDropdown" class="hidden absolute right-0 mt-2 w-64 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-2 z-50 text-xs">
+            <div class="px-3 py-2 border-b border-slate-800 text-[11px] text-slate-400">
+              Switch Active Demo Account:
+            </div>
+            <button onclick="switchUserRole('customer')" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center justify-between text-slate-200">
+              <div>
+                <div class="font-semibold text-white">Ramesh Kumar</div>
+                <div class="text-[10px] text-slate-400">Customer (Can order & request advice)</div>
+              </div>
+              <span class="text-[10px] bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded">Buyer</span>
+            </button>
+            <button onclick="switchUserRole('contractor')" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center justify-between text-slate-200">
+              <div>
+                <div class="font-semibold text-amber-400">Vikram Rathore</div>
+                <div class="text-[10px] text-slate-400">Painter Contractor (Manage catalog & quotes)</div>
+              </div>
+              <span class="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Vendor</span>
+            </button>
+            <button onclick="switchUserRole('admin')" class="w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center justify-between text-slate-200">
+              <div>
+                <div class="font-semibold text-emerald-400">Platform Admin</div>
+                <div class="text-[10px] text-slate-400">Verify & approve contractors</div>
+              </div>
+              <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded">Admin</span>
+            </button>
+            <div class="border-t border-slate-800 mt-1 pt-1">
+              <button onclick="openOtpModal()" class="w-full text-left px-3 py-2 hover:bg-slate-800 text-amber-400 font-semibold flex items-center">
+                <i class="fa-solid fa-mobile-screen mr-2"></i> Log in with Phone & OTP
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUB-BAR FOR LOGGED IN PORTALS (CUSTOMER / CONTRACTOR / ADMIN) -->
+  <div id="portalSubNav" class="bg-slate-900 border-b border-slate-800 py-2 px-4 text-xs">
+    <div class="container mx-auto flex items-center justify-between overflow-x-auto">
+      <div id="portalRoleTitle" class="flex items-center space-x-2 text-slate-300 font-medium whitespace-nowrap">
+        <!-- Dynamically rendered -->
+      </div>
+      <div id="portalActionTabs" class="flex items-center space-x-2 whitespace-nowrap">
+        <!-- Dynamically rendered tab pills -->
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO BANNER -->
+  <section class="bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white pt-10 pb-12 px-4 border-b border-slate-800">
+    <div class="container mx-auto max-w-5xl text-center">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30 mb-4">
+        <i class="fa-solid fa-sparkles"></i> The Smarter Way to Build & Renovate
+      </span>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+        Connect with Top Contractors & <br>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-amber-300">
+          Order Verified Materials with Expert Guidance
+        </span>
+      </h1>
+      <p class="mt-4 text-sm sm:text-base text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed">
+        Browse certified Indian trade specialists, view genuine project portfolios, and purchase fixed-price construction materials with direct contractor quantity recommendations.
+      </p>
+
+      <!-- Quick Trade Pills -->
+      <div class="mt-7 flex flex-wrap items-center justify-center gap-2">
+        <button onclick="filterByTrade('all')" class="trade-pill px-4 py-2 rounded-xl text-xs font-semibold bg-amber-500 text-slate-950 shadow-md">All Trades</button>
+        <button onclick="filterByTrade('Painter')" class="trade-pill px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700"><i class="fa-solid fa-paint-roller mr-1 text-amber-400"></i> Painters</button>
+        <button onclick="filterByTrade('Electrician')" class="trade-pill px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700"><i class="fa-solid fa-bolt mr-1 text-amber-400"></i> Electricians</button>
+        <button onclick="filterByTrade('Plumber')" class="trade-pill px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700"><i class="fa-solid fa-wrench mr-1 text-amber-400"></i> Plumbers</button>
+        <button onclick="filterByTrade('Mason & Civil')" class="trade-pill px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700"><i class="fa-solid fa-trowel-bricks mr-1 text-amber-400"></i> Mason & Civil</button>
+        <button onclick="filterByTrade('Carpenter')" class="trade-pill px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700"><i class="fa-solid fa-hammer mr-1 text-amber-400"></i> Carpenters</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTAINER -->
+  <main class="container mx-auto px-4 py-8 flex-1 max-w-7xl">
+
+    <!-- ================= VIEW 1: CONTRACTORS DIRECTORY ================= -->
+    <div id="view-contractors" class="space-y-6">
+      <div class="flex flex-col md:flex-row gap-6">
+        
+        <!-- SIDEBAR FILTERS -->
+        <aside class="w-full md:w-72 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm h-fit space-y-6">
+          <div class="flex items-center justify-between border-b pb-3">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center">
+              <i class="fa-solid fa-sliders mr-2 text-amber-500"></i> Filter Contractors
+            </h3>
+            <button onclick="resetFilters()" class="text-xs text-amber-600 hover:underline font-medium">Reset</button>
+          </div>
+
+          <!-- Keyword Search -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Search Contractor or Area</label>
+            <div class="relative">
+              <input type="text" id="filterSearch" placeholder="e.g. Vikram, Indiranagar..." oninput="debounceFetchContractors()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-amber-500 focus:bg-white pl-8">
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+            </div>
+          </div>
+
+          <!-- City Filter -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">City / Region</label>
+            <select id="filterCity" onchange="fetchContractors()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-amber-500">
+              <option value="all">All Indian Cities</option>
+              <option value="Bangalore">Bangalore</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Delhi NCR">Delhi NCR</option>
+              <option value="Hyderabad">Hyderabad</option>
+            </select>
+          </div>
+
+          <!-- Trade Filter -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Primary Trade</label>
+            <select id="filterTrade" onchange="fetchContractors()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-amber-500">
+              <option value="all">All Specialties</option>
+              <option value="Painter">Painter</option>
+              <option value="Electrician">Electrician</option>
+              <option value="Plumber">Plumber</option>
+              <option value="Mason & Civil">Mason & Civil</option>
+              <option value="Carpenter">Carpenter</option>
+            </select>
+          </div>
+
+          <!-- Minimum Rating -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Minimum Dual Rating</label>
+            <div class="space-y-1.5 text-xs text-slate-600">
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="radio" name="minRating" value="0" checked onchange="fetchContractors()" class="text-amber-500">
+                <span>Any rating</span>
+              </label>
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="radio" name="minRating" value="4.8" onchange="fetchContractors()" class="text-amber-500">
+                <span class="flex items-center text-amber-500 font-semibold"><i class="fa-solid fa-star mr-1"></i> 4.8 & above</span>
+              </label>
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="radio" name="minRating" value="4.5" onchange="fetchContractors()" class="text-amber-500">
+                <span class="flex items-center text-amber-500 font-semibold"><i class="fa-solid fa-star mr-1"></i> 4.5 & above</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Value props -->
+          <div class="pt-4 border-t border-slate-100 text-[11px] text-slate-500 space-y-2">
+            <div class="flex items-start gap-2">
+              <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i>
+              <span>All contractors verified with trade credentials.</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <i class="fa-solid fa-truck-fast text-amber-500 mt-0.5"></i>
+              <span>Direct material supplies delivered to your doorstep.</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- CONTRACTOR LIST GRID -->
+        <div class="flex-1 space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">Verified Trade Contractors</h2>
+              <p id="contractorResultCount" class="text-xs text-slate-500">Showing verified contractors</p>
+            </div>
+            <div class="text-xs text-slate-500 flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Live Availability
+            </div>
+          </div>
+
+          <!-- Grid of Contractors -->
+          <div id="contractorGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= VIEW 2: MATERIALS MARKET ================= -->
+    <div id="view-materials" class="hidden space-y-6">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">Contractor Materials Exchange</h2>
+          <p class="text-xs text-slate-500">Order genuine paints, cements, rebar steel, wires & pipes directly from contractors with fixed INR pricing.</p>
+        </div>
+        <div class="flex items-center gap-2 w-full md:w-auto">
+          <input type="text" id="matSearch" placeholder="Search brand or product..." oninput="debounceFetchMaterials()" class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-amber-500 text-slate-800 w-full md:w-64">
+          <select id="matCategoryFilter" onchange="fetchMaterials()" class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-amber-500 text-slate-800">
+            <option value="all">All Categories</option>
+            <option value="Interior Paint">Interior Paint</option>
+            <option value="Exterior Paint">Exterior Paint</option>
+            <option value="Cement">Cement</option>
+            <option value="Steel & Rebars">Steel & Rebars</option>
+            <option value="Cables & Wires">Cables & Wires</option>
+            <option value="Pipes">Pipes</option>
+            <option value="Waterproofing">Waterproofing</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Materials Grid -->
+      <div id="materialsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+
+    <!-- ================= VIEW 3: HOW GUIDANCE WORKS ================= -->
+    <div id="view-howItWorks" class="hidden max-w-4xl mx-auto space-y-8 py-4">
+      <div class="text-center space-y-3">
+        <span class="badge-amber text-xs px-3 py-1 rounded-full font-bold">Never Overbuy or Waste Material Again</span>
+        <h2 class="text-3xl font-extrabold text-slate-900">How Contractor Guidance & Material Quotes Work</h2>
+        <p class="text-sm text-slate-600 max-w-xl mx-auto">
+          Buying building materials for home renovation is confusing. Our platform lets you consult the contractor directly before placing any order.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+        <!-- Step 1 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
+          <div class="w-12 h-12 rounded-xl bg-amber-500 text-slate-950 font-black text-xl flex items-center justify-center mb-4">
+            1
+          </div>
+          <h3 class="font-bold text-slate-900 text-base mb-2">Submit Your Job Specs</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Click <strong>"Request Guidance"</strong> on any contractor profile. Tell them your room area (sq.ft), specific issues (dampness, old wiring), and brand preference.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
+          <div class="w-12 h-12 rounded-xl bg-orange-500 text-white font-black text-xl flex items-center justify-center mb-4">
+            2
+          </div>
+          <h3 class="font-bold text-slate-900 text-base mb-2">Contractor Reviews & Curates</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            The licensed contractor calculates the exact litres of paint, cement bags, or wire meters required and attaches expert application tips with contractor wholesale pricing.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500 text-white font-black text-xl flex items-center justify-center mb-4">
+            3
+          </div>
+          <h3 class="font-bold text-slate-900 text-base mb-2">1-Click Order Approval</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Review the contractor’s itemized bill of materials in your portal. Click <strong>"Approve & Place Order"</strong> with Doorstep Delivery or Warehouse Pickup.
+          </p>
+        </div>
+      </div>
+
+      <!-- Interactive Demo Launcher -->
+      <div class="bg-slate-900 text-white p-8 rounded-3xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6 border border-slate-800">
+        <div>
+          <h3 class="text-xl font-bold text-white mb-1">Try the Guidance Workflow Right Now</h3>
+          <p class="text-xs text-slate-300">We have loaded a sample quote from Master Painter Vikram waiting for your approval!</p>
+        </div>
+        <button onclick="openCustomerGuidanceTab()" class="px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow-lg shadow-amber-500/30 whitespace-nowrap">
+          <i class="fa-solid fa-clipboard-check mr-2"></i> View Sample Guidance Quote
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 4: CONTRACTOR DASHBOARD ================= -->
+    <div id="view-contractorDashboard" class="hidden space-y-6">
+      <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white p-6 rounded-2xl border border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="text-xs text-amber-400 font-bold uppercase tracking-wider">Contractor Management Studio</span>
+          <h2 id="contractorDashTitle" class="text-2xl font-black mt-0.5">Vikram ColourCraft Painters</h2>
+          <p class="text-xs text-slate-400">Trade: <span id="contractorDashTrade" class="text-white font-semibold">Painter</span> • Location: Indiranagar, Bangalore</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="openAddMaterialModal()" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-bold transition shadow-lg shadow-amber-500/20">
+            <i class="fa-solid fa-plus mr-1.5"></i> Add Material to Store
+          </button>
+        </div>
+      </div>
+
+      <!-- Contractor KPI Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+          <span class="text-xs text-slate-500 font-medium">Store Catalog Items</span>
+          <div id="dashMatCount" class="text-2xl font-extrabold text-slate-900 mt-1">5</div>
+          <span class="text-[10px] text-emerald-600 font-semibold">Live in Marketplace</span>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+          <span class="text-xs text-slate-500 font-medium">Guidance Inquiries</span>
+          <div id="dashGuidanceCount" class="text-2xl font-extrabold text-amber-600 mt-1">1</div>
+          <span class="text-[10px] text-amber-600 font-semibold">Awaiting Quotes</span>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+          <span class="text-xs text-slate-500 font-medium">Total Orders Fulfilled</span>
+          <div id="dashOrdersCount" class="text-2xl font-extrabold text-slate-900 mt-1">142</div>
+          <span class="text-[10px] text-slate-400">Completed Projects</span>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+          <span class="text-xs text-slate-500 font-medium">Dual Rating Average</span>
+          <div class="text-2xl font-extrabold text-slate-900 mt-1 flex items-center">
+            4.9 <i class="fa-solid fa-star text-amber-400 text-sm ml-1.5"></i>
+          </div>
+          <span class="text-[10px] text-emerald-600 font-semibold">Materials (4.8) • Labor (4.9)</span>
+        </div>
+      </div>
+
+      <!-- Sub Tabs for Contractor: Materials / Guidance Requests / Orders -->
+      <div class="border-b border-slate-200 flex space-x-6 text-sm font-semibold">
+        <button onclick="switchContractorSubTab('materials')" id="subtab-materials" class="pb-3 border-b-2 border-amber-500 text-amber-600">
+          <i class="fa-solid fa-boxes-stacked mr-1.5"></i> My Material Store (<span id="countSubMat">0</span>)
+        </button>
+        <button onclick="switchContractorSubTab('guidance')" id="subtab-guidance" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800">
+          <i class="fa-solid fa-comment-dots mr-1.5"></i> Guidance & Quotes (<span id="countSubGuidance">0</span>)
+        </button>
+        <button onclick="switchContractorSubTab('orders')" id="subtab-orders" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800">
+          <i class="fa-solid fa-truck-ramp-box mr-1.5"></i> Received Orders (<span id="countSubOrders">0</span>)
+        </button>
+      </div>
+
+      <!-- Sub Tab 1: Materials Management Table -->
+      <div id="c-subtab-materials" class="space-y-4">
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
+                <tr>
+                  <th class="p-3.5">Material & Brand</th>
+                  <th class="p-3.5">Category</th>
+                  <th class="p-3.5">Price (INR)</th>
+                  <th class="p-3.5">Unit</th>
+                  <th class="p-3.5">Stock Level</th>
+                  <th class="p-3.5">Status</th>
+                  <th class="p-3.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="contractorMaterialsTable" class="divide-y divide-slate-100 text-slate-700">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub Tab 2: Guidance Requests & Quote Builder -->
+      <div id="c-subtab-guidance" class="hidden space-y-4">
+        <div id="contractorGuidanceList" class="space-y-4">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Sub Tab 3: Contractor Orders Received -->
+      <div id="c-subtab-orders" class="hidden space-y-4">
+        <div id="contractorOrdersList" class="space-y-4">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 5: CUSTOMER PORTAL ================= -->
+    <div id="view-customerPortal" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="text-xs text-amber-600 font-bold uppercase tracking-wider">Customer Project Hub</span>
+          <h2 class="text-2xl font-extrabold text-slate-900 mt-0.5">My Renovation Inquiries & Orders</h2>
+          <p class="text-xs text-slate-500">Track contractor guidance quotes, active material shipments, and write dual verified reviews.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="switchMainTab('contractors')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold">
+            <i class="fa-solid fa-search mr-1.5"></i> Find More Contractors
+          </button>
+        </div>
+      </div>
+
+      <!-- Sub Tabs for Customer: Guidance Quotes / My Orders -->
+      <div class="border-b border-slate-200 flex space-x-6 text-sm font-semibold">
+        <button onclick="switchCustomerSubTab('quotes')" id="cust-tab-quotes" class="pb-3 border-b-2 border-amber-500 text-amber-600">
+          <i class="fa-solid fa-file-invoice-dollar mr-1.5"></i> Guidance Quotes Received (<span id="custQuotesBadge">0</span>)
+        </button>
+        <button onclick="switchCustomerSubTab('orders')" id="cust-tab-orders" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800">
+          <i class="fa-solid fa-bag-shopping mr-1.5"></i> My Material Orders (<span id="custOrdersBadge">0</span>)
+        </button>
+      </div>
+
+      <!-- Customer Subtab 1: Quotes Received -->
+      <div id="c-sub-quotes" class="space-y-4">
+        <div id="customerQuotesList" class="space-y-4">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Customer Subtab 2: Orders Placed -->
+      <div id="c-sub-orders" class="hidden space-y-4">
+        <div id="customerOrdersList" class="space-y-4">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 6: ADMIN APPROVAL PANEL ================= -->
+    <div id="view-adminPortal" class="hidden space-y-6">
+      <div class="bg-slate-900 text-white p-6 rounded-2xl border border-slate-800">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <span class="text-xs text-amber-400 font-bold uppercase tracking-wider">Marketplace Administration</span>
+            <h2 class="text-2xl font-black mt-0.5">Contractor Verification & Platform Governance</h2>
+            <p class="text-xs text-slate-400">Review onboarding applications, verify licenses, and approve public visibility.</p>
+          </div>
+          <span class="badge-emerald px-3 py-1 rounded-full text-xs font-bold">Admin Active</span>
+        </div>
+      </div>
+
+      <!-- Admin KPI Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+          <span class="text-xs text-slate-500">Gross Marketplace Value</span>
+          <div id="adminGmv" class="text-2xl font-black text-slate-900 mt-1">₹ 0</div>
+          <span class="text-[10px] text-emerald-600 font-semibold">Total Material Volume</span>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+          <span class="text-xs text-slate-500">Total Registered Contractors</span>
+          <div id="adminContractorsCount" class="text-2xl font-black text-slate-900 mt-1">5</div>
+          <span class="text-[10px] text-slate-400">Across 4 major metros</span>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+          <span class="text-xs text-slate-500">Pending Approvals</span>
+          <div id="adminPendingCount" class="text-2xl font-black text-amber-600 mt-1">1</div>
+          <span class="text-[10px] text-amber-600 font-semibold">Requires verification</span>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+          <span class="text-xs text-slate-500">Active Materials</span>
+          <div id="adminMaterialsCount" class="text-2xl font-black text-slate-900 mt-1">16</div>
+          <span class="text-[10px] text-slate-400">Listed across trades</span>
+        </div>
+      </div>
+
+      <!-- Contractors Approval Queue -->
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div class="p-4 border-b border-slate-200 flex justify-between items-center">
+          <h3 class="font-bold text-sm text-slate-900">Contractor Accounts & Verification Status</h3>
+          <span class="text-xs text-slate-500">Toggle switch to approve or revoke live status</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
+              <tr>
+                <th class="p-3.5">Contractor</th>
+                <th class="p-3.5">Trade</th>
+                <th class="p-3.5">Location</th>
+                <th class="p-3.5">Experience</th>
+                <th class="p-3.5">Phone</th>
+                <th class="p-3.5">Verification Status</th>
+                <th class="p-3.5 text-right">Approval Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminContractorsTable" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================= MODAL: CONTRACTOR DETAIL & STORE ================= -->
+  <div id="contractorModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="relative bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white p-6 flex-shrink-0">
+        <button onclick="closeContractorModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg bg-slate-800/80 w-8 h-8 rounded-full flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <img id="modalContractorPhoto" src="" class="w-20 h-20 rounded-2xl object-cover border-2 border-amber-500 shadow-md">
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="modalContractorTrade" class="badge-amber text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Painter</span>
+              <span id="modalContractorBadge" class="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-500/30">
+                <i class="fa-solid fa-circle-check"></i> Verified Contractor
+              </span>
+            </div>
+            <h2 id="modalContractorName" class="text-xl sm:text-2xl font-black text-white mt-1">Vikram ColourCraft Painters</h2>
+            <div class="flex flex-wrap items-center gap-3 text-xs text-slate-300 mt-2">
+              <span><i class="fa-solid fa-location-dot text-amber-400 mr-1"></i> <span id="modalContractorArea">Indiranagar, Bangalore</span></span>
+              <span><i class="fa-solid fa-briefcase text-amber-400 mr-1"></i> <span id="modalContractorExp">12 Years Exp</span></span>
+              <span><i class="fa-solid fa-circle-check text-amber-400 mr-1"></i> <span id="modalContractorCompleted">142 Jobs Done</span></span>
+              <span><i class="fa-solid fa-phone text-amber-400 mr-1"></i> <span id="modalContractorPhone">+91 98450 12345</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dual Rating Banner in Header -->
+        <div class="mt-4 pt-3 border-t border-slate-700/60 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-1.5">
+              <span class="text-slate-400">Material Quality:</span>
+              <span id="modalRatingMat" class="font-bold text-amber-400 flex items-center">4.8 <i class="fa-solid fa-star ml-1 text-[11px]"></i></span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-slate-400">Labor & Workmanship:</span>
+              <span id="modalRatingWork" class="font-bold text-amber-400 flex items-center">4.9 <i class="fa-solid fa-star ml-1 text-[11px]"></i></span>
+            </div>
+          </div>
+          <button id="modalRequestGuidanceBtn" onclick="openGuidanceModalFromContractor()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition shadow-lg shadow-amber-500/30 flex items-center gap-1.5">
+            <i class="fa-solid fa-hand-holding-hand"></i> Request Guidance & Custom Quote
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Tabs -->
+      <div class="bg-slate-100 px-6 border-b border-slate-200 flex space-x-6 text-xs font-bold text-slate-600 flex-shrink-0">
+        <button onclick="switchModalTab('materials')" id="m-tab-materials" class="py-3 border-b-2 border-amber-500 text-amber-600">
+          <i class="fa-solid fa-boxes-stacked mr-1"></i> Contractor Material Store (<span id="modalMatCount">0</span>)
+        </button>
+        <button onclick="switchModalTab('portfolio')" id="m-tab-portfolio" class="py-3 border-b-2 border-transparent hover:text-slate-900">
+          <i class="fa-solid fa-images mr-1"></i> Completed Work Portfolio (<span id="modalPortCount">0</span>)
+        </button>
+        <button onclick="switchModalTab('reviews')" id="m-tab-reviews" class="py-3 border-b-2 border-transparent hover:text-slate-900">
+          <i class="fa-solid fa-star-half-stroke mr-1"></i> Dual Reviews (<span id="modalRevCount">0</span>)
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 overflow-y-auto space-y-6 flex-1 bg-slate-50">
+        
+        <!-- Tab Content: Materials Store -->
+        <div id="m-content-materials" class="space-y-4">
+          <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs text-amber-800 flex items-center justify-between">
+            <span><i class="fa-solid fa-shield-check mr-1.5 text-amber-600"></i> All materials are authentic, contractor-priced, and eligible for site delivery.</span>
+            <span class="font-bold">Fixed Indian Rupee (₹) Pricing</span>
+          </div>
+          <div id="modalMaterialsList" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Tab Content: Portfolio -->
+        <div id="m-content-portfolio" class="hidden space-y-4">
+          <div id="modalPortfolioList" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Tab Content: Reviews -->
+        <div id="m-content-reviews" class="hidden space-y-4">
+          <div id="modalReviewsList" class="space-y-3">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="bg-white p-4 border-t border-slate-200 flex items-center justify-between text-xs flex-shrink-0">
+        <span class="text-slate-500">Need specific quantities calculated? Click Guidance request above.</span>
+        <button onclick="closeContractorModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-xl font-semibold text-slate-800">Close</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= MODAL: REQUEST GUIDANCE ================= -->
+  <div id="guidanceModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 p-6 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <span class="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Expert Recommendation</span>
+          <h3 class="font-bold text-slate-900 text-lg">Request Contractor Guidance</h3>
+        </div>
+        <button onclick="closeGuidanceModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs text-slate-700">
+        Consulting with: <strong id="guidanceContractorName" class="text-slate-900">Vikram ColourCraft Painters</strong>
+        <p class="text-[11px] text-slate-500 mt-0.5">The contractor will analyze your requirements and send an itemized bill of materials with quantity recommendations.</p>
+      </div>
+
+      <form id="guidanceForm" onsubmit="submitGuidanceRequest(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Project Title</label>
+          <input type="text" id="gProjectTitle" required placeholder="e.g. 3BHK Living Room Repaint or Bathroom Re-piping" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-amber-500">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Project Details & Dimensions (sq.ft / length / rooms)</label>
+          <textarea id="gProjectDetails" rows="4" required placeholder="Describe what you want to achieve, room square footage, wall conditions, dampness, or specific challenges..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-amber-500"></textarea>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Preferred Brand (Optional)</label>
+          <input type="text" id="gPreferredBrand" placeholder="e.g. Asian Paints, UltraTech, Tata Tiscon, Polycab..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div class="pt-3 border-t flex justify-end gap-2">
+          <button type="button" onclick="closeGuidanceModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl font-bold transition shadow-md">
+            <i class="fa-solid fa-paper-plane mr-1"></i> Send to Contractor
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: CONTRACTOR SEND QUOTE ================= -->
+  <div id="quoteModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-slate-200 p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <span class="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Quote & Recommendation Builder</span>
+          <h3 class="font-bold text-slate-900 text-lg">Send Guidance & Material Quote</h3>
+        </div>
+        <button onclick="closeQuoteModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
+        <span class="font-bold text-slate-800">Customer Request:</span>
+        <div id="quoteReqTitle" class="font-semibold text-slate-900 mt-1">2BHK Interior Wall Repainting</div>
+        <div id="quoteReqDetails" class="text-slate-600 mt-0.5">Details here...</div>
+      </div>
+
+      <form id="quoteForm" onsubmit="submitQuoteToCustomer(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Contractor Advice & Guidance Notes</label>
+          <textarea id="quoteNotes" rows="3" required placeholder="Give your professional advice on primer coats, drying times, surface prep, and why you recommended these materials..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500"></textarea>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="font-bold text-slate-700">Recommended Materials List</label>
+            <button type="button" onclick="addQuoteItemRow()" class="text-xs text-amber-600 font-bold hover:underline">
+              <i class="fa-solid fa-plus mr-1"></i> Add Material
+            </button>
+          </div>
+          <div id="quoteItemsContainer" class="space-y-2">
+            <!-- Dynamic rows -->
+          </div>
+        </div>
+
+        <div class="bg-slate-100 p-3 rounded-xl flex items-center justify-between font-bold text-sm">
+          <span>Total Recommended Amount:</span>
+          <span class="text-slate-900 font-black text-base" id="quoteRunningTotal">₹ 0</span>
+        </div>
+
+        <div class="pt-3 border-t flex justify-end gap-2">
+          <button type="button" onclick="closeQuoteModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl font-bold transition shadow-md">
+            <i class="fa-solid fa-check-double mr-1"></i> Send Quote to Customer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: CART & CHECKOUT ================= -->
+  <div id="cartModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex justify-end">
+    <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between overflow-hidden">
+      <!-- Header -->
+      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-900 text-white">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-cart-shopping text-amber-400"></i>
+          <h3 class="font-bold text-sm">Your Material Order</h3>
+        </div>
+        <button onclick="toggleCartModal(false)" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <!-- Items List -->
+      <div id="cartItemsList" class="p-4 overflow-y-auto flex-1 space-y-3 text-xs">
+        <!-- Dynamically populated -->
+      </div>
+
+      <!-- Checkout Form & Pricing Summary -->
+      <div class="p-4 border-t border-slate-200 bg-slate-50 space-y-3 text-xs">
+        
+        <!-- Fulfillment Mode -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Fulfillment Method</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" id="btnFulfillDoorstep" onclick="selectFulfillment('doorstep')" class="p-2.5 rounded-xl border border-amber-500 bg-amber-50 text-amber-900 font-bold text-center">
+              <i class="fa-solid fa-truck-fast mr-1"></i> Doorstep (₹150)
+            </button>
+            <button type="button" id="btnFulfillPickup" onclick="selectFulfillment('pickup')" class="p-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 font-semibold text-center">
+              <i class="fa-solid fa-store mr-1"></i> Store Pickup (Free)
+            </button>
+          </div>
+        </div>
+
+        <!-- Address & Contact -->
+        <div id="deliveryAddressSection">
+          <label class="block font-bold text-slate-700 mb-1">Delivery Address</label>
+          <input type="text" id="checkoutAddress" placeholder="Flat / House No, Street, Landmark, Pincode" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Contact Phone</label>
+          <input type="tel" id="checkoutPhone" value="+91 98765 43210" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500">
+        </div>
+
+        <!-- Payment Method -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Payment Method</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center space-x-2 bg-white p-2 rounded-xl border border-slate-300 cursor-pointer">
+              <input type="radio" name="checkoutPayment" value="cod" checked class="text-amber-500">
+              <span class="font-semibold">Cash on Site</span>
+            </label>
+            <label class="flex items-center space-x-2 bg-white p-2 rounded-xl border border-slate-300 cursor-pointer">
+              <input type="radio" name="checkoutPayment" value="upi" class="text-amber-500">
+              <span class="font-semibold">UPI / Online</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Price Totals -->
+        <div class="border-t pt-2 space-y-1">
+          <div class="flex justify-between text-slate-600">
+            <span>Subtotal:</span>
+            <span id="cartSubtotal" class="font-semibold">₹ 0</span>
+          </div>
+          <div class="flex justify-between text-slate-600">
+            <span>Delivery Fee:</span>
+            <span id="cartDeliveryFee" class="font-semibold">₹ 150</span>
+          </div>
+          <div class="flex justify-between text-slate-900 font-extrabold text-sm pt-1 border-t">
+            <span>Total Payable:</span>
+            <span id="cartTotalPayable" class="text-amber-600 font-black">₹ 0</span>
+          </div>
+        </div>
+
+        <button onclick="submitCartOrder()" id="btnSubmitCartOrder" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow-lg shadow-amber-500/20">
+          Confirm & Place Order
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: WRITE DUAL REVIEW ================= -->
+  <div id="reviewModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-200 p-6 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <span class="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Verified Purchase Review</span>
+          <h3 class="font-bold text-slate-900 text-base">Rate Contractor & Materials</h3>
+        </div>
+        <button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="reviewForm" onsubmit="submitReview(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="revOrderId">
+        <input type="hidden" id="revContractorId">
+
+        <!-- Rating 1: Material Quality -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
+          <div class="flex justify-between font-bold text-slate-800">
+            <span>1. Material Quality Rating</span>
+            <span id="labelMatRating" class="text-amber-600 font-black">5.0 ★</span>
+          </div>
+          <input type="range" id="revMatRating" min="1" max="5" step="0.5" value="5" oninput="document.getElementById('labelMatRating').textContent = this.value + ' ★'" class="w-full accent-amber-500">
+          <p class="text-[10px] text-slate-500">Did the materials match brand packaging, freshness, and stated quantity?</p>
+        </div>
+
+        <!-- Rating 2: Workmanship & Labor -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
+          <div class="flex justify-between font-bold text-slate-800">
+            <span>2. Contractor Workmanship & Guidance</span>
+            <span id="labelWorkRating" class="text-amber-600 font-black">5.0 ★</span>
+          </div>
+          <input type="range" id="revWorkRating" min="1" max="5" step="0.5" value="5" oninput="document.getElementById('labelWorkRating').textContent = this.value + ' ★'" class="w-full accent-amber-500">
+          <p class="text-[10px] text-slate-500">How accurate were the contractor's recommendations and execution quality?</p>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Your Detailed Feedback</label>
+          <textarea id="revComment" rows="3" required placeholder="Describe your experience with the delivery and advice..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500"></textarea>
+        </div>
+
+        <div class="pt-2 border-t flex justify-end gap-2">
+          <button type="button" onclick="closeReviewModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl font-bold transition shadow-md">
+            Submit Dual Review
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: ADD MATERIAL (CONTRACTOR) ================= -->
+  <div id="addMaterialModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-200 p-6 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <span class="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Store Inventory</span>
+          <h3 class="font-bold text-slate-900 text-base">List New Material For Sale</h3>
+        </div>
+        <button onclick="closeAddMaterialModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="addMaterialForm" onsubmit="submitNewMaterial(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Product / Material Name</label>
+          <input type="text" id="newMatName" required placeholder="e.g. Royale Luxury Emulsion White" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Brand Name</label>
+            <input type="text" id="newMatBrand" required placeholder="Asian Paints, UltraTech..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Category</label>
+            <input type="text" id="newMatCategory" required placeholder="Interior Paint, Cement..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Price in INR (₹)</label>
+            <input type="number" id="newMatPrice" step="0.5" required placeholder="5850" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Unit of Measure</label>
+            <input type="text" id="newMatUnit" required placeholder="20L Bucket, 50kg Bag..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Initial Stock Quantity</label>
+          <input type="number" id="newMatStock" required value="20" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Short Description & Specifications</label>
+          <textarea id="newMatDesc" rows="2" placeholder="Describe coverage, finish, or genuine warranty details..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500"></textarea>
+        </div>
+
+        <div class="pt-2 border-t flex justify-end gap-2">
+          <button type="button" onclick="closeAddMaterialModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl font-bold transition shadow-md">
+            Save to Catalog
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: PHONE OTP LOGIN ================= -->
+  <div id="otpModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-200 p-6 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-lock"></i></div>
+          <h3 class="font-bold text-slate-900 text-sm">Phone Number & OTP</h3>
+        </div>
+        <button onclick="closeOtpModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Mobile Number (India)</label>
+          <div class="flex">
+            <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-slate-300 bg-slate-100 text-slate-600 font-semibold">+91</span>
+            <input type="tel" id="otpPhoneInput" placeholder="9876543210" class="w-full bg-slate-50 border border-slate-300 rounded-r-xl px-3 py-2 focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <div id="otpInputSection" class="hidden space-y-2">
+          <label class="block font-bold text-slate-700">Enter 6-Digit OTP</label>
+          <input type="text" id="otpCodeInput" placeholder="123456" maxlength="6" class="w-full tracking-widest text-center text-lg font-bold bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500">
+          <div class="text-[11px] text-emerald-600 font-medium">Demo Hint: Any code or <strong>123456</strong> works.</div>
+        </div>
+
+        <div class="pt-2">
+          <button id="btnRequestOtp" onclick="handleRequestOtp()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition shadow">
+            Send One-Time Password
+          </button>
+          <button id="btnVerifyOtp" onclick="handleVerifyOtp()" class="hidden w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition shadow">
+            Verify & Sign In
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 border border-slate-800">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+    <span id="toastMsg">Action completed successfully</span>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-12">
+    <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+      <div class="flex items-center space-x-2">
+        <div class="w-6 h-6 bg-amber-500 rounded-lg flex items-center justify-center text-slate-950 font-black text-xs">
+          <i class="fa-solid fa-helmet-safety"></i>
+        </div>
+        <span class="font-bold text-white">BuildMate India</span>
+        <span class="text-slate-500">© 2026 • Verified Contractors & Direct Building Materials</span>
+      </div>
+      <div class="flex items-center space-x-4 text-[11px]">
+        <span>Coverage: Bangalore • Mumbai • Delhi NCR • Hyderabad</span>
+        <span>Dual Ratings (Material + Labor)</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- APPLICATION LOGIC JAVASCRIPT -->
+  <script src="/static/app.js"></script>
+</body>
+</html>
